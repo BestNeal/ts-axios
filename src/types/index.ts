@@ -26,6 +26,9 @@ export interface AxiosRequestConfig {
 
   transformRequest?: AxiosTransformer | AxiosTransformer[]
   transformResponse?: AxiosTransformer | AxiosTransformer[]
+
+  cancelToken?: CancelToken //取消接口
+  withCredentials?: boolean //设置跨域是否可携带cookie
 }
 
 export interface AxiosResponse<T = any> {
@@ -63,8 +66,13 @@ export interface Axios {
   patch<T = any>(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise<T>
 }
 
+//拦截器功能接口
+
 export interface AxiosStatic extends AxiosInstance {
   create(config?: AxiosRequestConfig): AxiosInstance
+  CancelToken: CancelTokenStatic
+  Cancel: CancelStatic
+  isCancel: (value: any) => boolean
 }
 
 export interface AxiosInstance extends Axios {
@@ -86,6 +94,42 @@ export interface RejectedFn {
   (error: any): any
 }
 
+//合并功能接口
+
 export interface AxiosTransformer {
   (data: any, headers?: any): any
+}
+
+//取消发送功能接口
+
+export interface CancelToken {
+  promise: Promise<Cancel>
+  reason?: Cancel
+  throwIfRequested(): void
+}
+
+export interface Canceler {
+  (message?: string): void
+}
+
+export interface CancelExecutor {
+  (cancel: Canceler): void
+}
+
+export interface CancelTokenSource {
+  token: CancelToken
+  cancel: Canceler
+}
+
+export interface CancelTokenStatic {
+  new (executor: CancelExecutor): CancelToken
+  source(): CancelTokenSource
+}
+
+export interface Cancel {
+  message?: string
+}
+
+export interface CancelStatic {
+  new (message?: string): Cancel
 }
