@@ -7,9 +7,10 @@ import Cancel, { isCancel } from './cancel/Cancel'
 import CancelToken from './cancel/cancelToken'
 
 function createIntance(config: AxiosRequestConfig): AxiosStatic {
+  //(工厂模式)
   const contenttext = new Axios(config)
-  const intance = Axios.prototype.request.bind(contenttext)
-  extend(intance, contenttext)
+  const intance = Axios.prototype.request.bind(contenttext) //使intance本身具有request方法
+  extend(intance, contenttext) //再继承Axios里内置的方法
   return intance as AxiosStatic
 }
 
@@ -21,5 +22,17 @@ axios.create = function(config) {
 axios.CancelToken = CancelToken
 axios.Cancel = Cancel
 axios.isCancel = isCancel
+
+axios.all = function(promises) {
+  return Promise.all(promises)
+}
+
+axios.spread = function(callback) {
+  return function warp(arr) {
+    return callback.apply(null, arr)
+  }
+}
+
+axios.Axios = Axios
 
 export default axios

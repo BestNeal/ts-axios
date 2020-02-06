@@ -6,7 +6,7 @@ import {
   ResolvedFn,
   RejectedFn
 } from '../types'
-import dispatchRequest from './dispatchRequest'
+import dispatchRequest, { transformURL } from './dispatchRequest'
 import { type } from 'os'
 import { InterceptorManager } from './interceptorManager'
 import mergeConfig from './mergeConfig'
@@ -35,15 +35,17 @@ export default class Axios {
 
   request(url: any, config?: any): AxiosPromise {
     if (typeof url === 'string') {
+      //如果传递了url参数
       if (!config) {
         config = {}
       }
       config.url = url
     } else {
+      //传递了一个参数 则将第一个参数赋值给第二个参数
       config = url
     }
-
     config = mergeConfig(this.defaults, config)
+    config.method = config.method.toLowerCase()
 
     const chain: PromiseChain[] = [
       {
@@ -92,6 +94,11 @@ export default class Axios {
     return this._requestMethodWithData('patch', url, data, config)
   }
 
+  getUri(config?: AxiosRequestConfig): string {
+    config = mergeConfig(this.defaults, config)
+    return transformURL(config!)
+  }
+
   _requestMethodWithoutData(
     method: Method,
     url: string,
@@ -112,6 +119,7 @@ export default class Axios {
     data?: any,
     config?: AxiosRequestConfig
   ): AxiosPromise {
+    //封装post put patch
     return this.request(
       Object.assign(config || {}, {
         method,

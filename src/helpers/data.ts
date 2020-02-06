@@ -10,6 +10,7 @@ export function transformRequest(data: any): any {
 }
 
 export function transformResponse(data: any): any {
+  //服务端返回的数据
   //如返回的data是字符串类型的数据 则更改为对象类型
   if (typeof data === 'string') {
     try {

@@ -50,6 +50,10 @@ module.exports = {
                         }
                     }
                 ]
+            },
+            {
+                test: /\.css$/,
+                use: ['style-loader','css-loader']
             }
         ]
     },
@@ -60,6 +64,6 @@ module.exports = {
 
     plugins:[
         new webpack.HotModuleReplacementPlugin(),
-        new webpack.NoEmitOnErrorsPlugin()
+        new webpack.NoEmitOnErrorsPlugin() //webpack启用时遇到错误代码不会退出
     ]
 }
